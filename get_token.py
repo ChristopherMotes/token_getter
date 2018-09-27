@@ -17,22 +17,24 @@ def get_creds(mfaCode):
 
 def config_file_updater(responseDict):
     config = ConfigParser.SafeConfigParser()
+    sectionName = "get_token"
     awsFile = "/home/motes/.aws/credentials"
     config.read(awsFile)
     try: 
-        config.add_section('swithRoleRoot')
+        config.add_section(sectionName)
     except ConfigParser.DuplicateSectionError:
         pass
     except:
         raise
-    config.set('swithRoleRoot', 'output', 'text')
-    config.set('swithRoleRoot', 'region', 'us-east-2')
-    config.set('swithRoleRoot', 'aws_access_key_id', responseDict['Credentials']['AccessKeyId'])
-    config.set('swithRoleRoot', 'aws_secret_access_key', responseDict['Credentials']['SecretAccessKey'])
-    config.set('swithRoleRoot', 'aws_session_token', responseDict['Credentials']['SessionToken'])
+    config.set(sectionName, 'output', 'text')
+    config.set(sectionName, 'region', 'us-east-2')
+    config.set(sectionName, 'aws_access_key_id', responseDict['Credentials']['AccessKeyId'])
+    config.set(sectionName, 'aws_secret_access_key', responseDict['Credentials']['SecretAccessKey'])
+    config.set(sectionName, 'aws_session_token', responseDict['Credentials']['SessionToken'])
 
     with open(awsFile, 'wb') as configfile:
         config.write(configfile)
+    print "validate with: \n\taws --profile " + sectionName + " s3 ls"
   
 if __name__ == "__main__":
     mfa_code = raw_input("enter security token: ")
