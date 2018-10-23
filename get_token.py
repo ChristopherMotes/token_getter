@@ -7,12 +7,19 @@ def get_creds(mfaCode):
     config.read('account.cfg')
     configDict = dict(config.items('default'))
     client = boto3.client('sts')    
-    response = client.assume_role(
-        RoleArn=configDict['rolearn'],
-        RoleSessionName='ScriptGenreated',
-        SerialNumber=configDict['serialnumber'],
-        TokenCode=mfaCode
-    )
+    try:
+        response = client.assume_role(
+            RoleArn=configDict['rolearn'],
+            RoleSessionName='ScriptGenreated',
+            SerialNumber=configDict['serialnumber'],
+            TokenCode=mfaCode
+        )
+    except client.exceptions.InvalidClientTokenId as errorMessage:
+        print errorMessage
+        print "Is AWS_DEFAULT_PROFILE corret?"
+        exit 100
+    except:
+        raise
     return response
 
 def config_file_updater(responseDict):
