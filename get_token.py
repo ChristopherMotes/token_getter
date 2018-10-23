@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import boto3
+import botocore
 import ConfigParser
 
 def get_creds(mfaCode):
@@ -14,10 +15,10 @@ def get_creds(mfaCode):
             SerialNumber=configDict['serialnumber'],
             TokenCode=mfaCode
         )
-    except client.exceptions.InvalidClientTokenId as errorMessage:
+    except botocore.exceptions.ClientError as errorMessage:
         print errorMessage
         print "Is AWS_DEFAULT_PROFILE corret?"
-        exit 100
+        exit(100)
     except:
         raise
     return response
