@@ -16,9 +16,12 @@ def get_creds(mfaCode):
             TokenCode=mfaCode
         )
     except botocore.exceptions.ClientError as errorMessage:
-        print errorMessage
-        print "Is AWS_DEFAULT_PROFILE corret?"
-        exit(100)
+        if errorMessage.response['Error']['Code'] == 'InvalidClientTokenId':
+            print errorMessage
+            print "Is AWS_DEFAULT_PROFILE corret?"
+            exit(100)
+        else:
+             raise
     except:
         raise
     return response
